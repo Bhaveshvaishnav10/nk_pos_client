@@ -1,0 +1,267 @@
+package com.neokred.pos.ui.setting.connection_settings;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Typeface;
+import android.hardware.usb.UsbDevice;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.neokred.pos.common.enums.POS_TYPE;
+import com.neokred.pos.TitleProviderListener;
+import com.neokred.sdk.payment.NeokredPOSService;
+import com.neokred.pos.ui.setting.device_config.DeviceConfigActivity;
+import com.neokred.pos.ui.setting.device_selection.DeviceSelectionActivity;
+import com.neokred.pos.utils.DevUtils;
+import com.neokred.pos.utils.TRACE;
+import com.neokred.pos.utils.USBClass;
+import com.neokred.pos.BR;
+import com.neokred.pos.R;
+import com.neokred.pos.databinding.FragmentConnectionSettingsBinding;
+
+import java.util.ArrayList;
+
+import me.goldze.mvvmhabit.base.BaseFragment;
+import me.goldze.mvvmhabit.utils.SPUtils;
+
+public class ConnectionSettingsFragment extends BaseFragment<FragmentConnectionSettingsBinding, ConnectionSettingsViewModel> implements TitleProviderListener {
+    private final int REQUEST_CODE_CURRENCY = 1000;
+    private final int REQUEST_TRANSACTION_TYPE = 1001;
+    private final int REQUEST_CARD_MODE = 1002;
+
+    @Override
+    public int initContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return R.layout.fragment_connection_settings;
+    }
+
+    @Override
+    public int initVariableId() {
+        return BR.viewModel;
+    }
+
+    @Override
+    public ConnectionSettingsViewModel initViewModel() {
+        return new ViewModelProvider(this).get(ConnectionSettingsViewModel.class);
+    }
+
+    @Override
+    public void initData() {
+        super.initData();
+        // Setup event listeners
+        setupEventListeners();
+
+        initAppVersion();
+    }
+
+    private void initAppVersion() {
+        String versionName = DevUtils.getVersionName(getContext());
+        binding.tvAppVersion.setText("APP Version: " + versionName);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        viewModel.loadSettings();
+    }
+
+    /**
+     * Setup event listeners
+     */
+    private void setupEventListeners() {
+        // Device selection event
+        viewModel.selectBluetoothEvent.observe(this, v -> {
+            NeokredPOSService.getInstance(getContext()).disconnect();
+            navigateToDeviceSelection();
+        });
+
+        viewModel.selectUartEvent.observe(this, v -> {
+            NeokredPOSService.getInstance(getContext()).disconnect();
+            hideAllView();
+            viewModel.isShowUartImageView.set(true);
+            viewModel.isShowUartTextView.set(true);
+            viewModel.deviceConnected.set(true);
+            SPUtils.getInstance().put("deviceAddress", "");
+            SPUtils.getInstance().put("bluetoothName", "");
+            SPUtils.getInstance().put("bluetoothAddress", "");
+            SPUtils.getInstance().put("isSelectUartSuccess", true);
+            SPUtils.getInstance().put("isSelectUsbSuccess", false);
+        });
+
+
+        viewModel.selectUsbEvent.observe(this, v -> {
+            NeokredPOSService.getInstance(getContext()).disconnect();
+            showUsbDeviceDialog();
+        });
+
+        // Transaction type click event
+        viewModel.transactionTypeClickEvent.observe(this, v -> {
+            Intent intent = new Intent(getActivity(), DeviceConfigActivity.class);
+            intent.putExtra(DeviceConfigActivity.EXTRA_LIST_TYPE,
+                    DeviceConfigActivity.TYPE_TRANSACTION);
+            startActivityForResult(intent, REQUEST_TRANSACTION_TYPE);
+        });
+
+        // Card mode click event
+        viewModel.cardModeClickEvent.observe(this, v -> {
+            Intent intent = new Intent(getActivity(), DeviceConfigActivity.class);
+            intent.putExtra(DeviceConfigActivity.EXTRA_LIST_TYPE,
+                    DeviceConfigActivity.TYPE_CARD_MODE);
+            startActivityForResult(intent, REQUEST_CARD_MODE);
+        });
+
+        // Currency code click event
+        viewModel.currencyCodeClickEvent.observe(this, v -> {
+//            showCurrencyCodeDialog();
+            Intent intent = new Intent(getActivity(), DeviceConfigActivity.class);
+            intent.putExtra(DeviceConfigActivity.EXTRA_LIST_TYPE,
+                    DeviceConfigActivity.TYPE_CURRENCY);
+            startActivityForResult(intent, REQUEST_CODE_CURRENCY);
+        });
+    }
+
+    /**
+     * Navigate to device selection screen
+     */
+    private void navigateToDeviceSelection() {
+        Intent intent = new Intent(getActivity(), DeviceSelectionActivity.class);
+        startActivityForResult(intent, DeviceSelectionActivity.REQUEST_CODE_SELECT_DEVICE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            TRACE.d("onActivityResult  above");
+            if (requestCode == DeviceSelectionActivity.REQUEST_CODE_SELECT_DEVICE) {
+                // Get device name
+                String bluetoothName = SPUtils.getInstance().getString("bluetoothName");
+                String bluetoothAddress = SPUtils.getInstance().getString("bluetoothAddress");
+                boolean isBluetoothStates = data.getBooleanExtra("isBluetoothStates", false);
+                // 更新UI
+                if (isBluetoothStates || (!TextUtils.isEmpty(bluetoothName)) && !TextUtils.isEmpty(bluetoothAddress)) {
+                    hideAllView();
+                    showBlutetoothSelectView(bluetoothAddress);
+                } else {
+                    hideAllView();
+                }
+            } else if (requestCode == REQUEST_CODE_CURRENCY) {
+                String currencyName = data.getStringExtra("currency_name");
+                viewModel.currencyCode.set(currencyName);
+                TRACE.i("currency code = " + currencyName);
+            } else if (requestCode == REQUEST_TRANSACTION_TYPE) {
+                String transactionType = data.getStringExtra("transaction_type");
+                viewModel.transactionType.set(transactionType);
+                TRACE.i("transactionType = " + transactionType);
+            } else if (requestCode == REQUEST_CARD_MODE) {
+                String cardMode = data.getStringExtra("card_mode");
+                viewModel.cardMode.set(cardMode);
+                TRACE.i("cardMode = " + cardMode);
+            } else {
+                viewModel.loadSettings();
+            }
+        }
+    }
+
+    private void showBlutetoothSelectView(String bluetoothAddress) {
+        viewModel.isShowBluetoothImageView.set(true);
+        viewModel.isShowBluetoothTextView.set(true);
+        viewModel.deviceConnected.set(true);
+        SPUtils.getInstance().put("deviceAddress", bluetoothAddress);
+    }
+
+    private void hideAllView() {
+        viewModel.isShowBluetoothImageView.set(false);
+        viewModel.isShowBluetoothTextView.set(false);
+        viewModel.isShowUartImageView.set(false);
+        viewModel.isShowUartTextView.set(false);
+        viewModel.isShowUSBImageView.set(false);
+        viewModel.isShowUsbTextView.set(false);
+    }
+
+    @Override
+    public String getTitle() {
+        return "Settings";
+    }
+
+
+    private void showUsbDeviceDialog() {
+
+        USBClass usb = new USBClass();
+        usb.setUsbPermissionListener(new USBClass.UsbPermissionListener() {
+            @Override
+            public void onPermissionGranted(UsbDevice device) {
+                ArrayList<String> deviceList = usb.GetUSBDevices(getActivity());
+                openUsbDeviceDialog(deviceList);
+            }
+
+            @Override
+            public void onPermissionDenied(UsbDevice device) {
+                Toast.makeText(getActivity(), "No Permission", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        ArrayList<String> deviceList = usb.GetUSBDevices(getActivity());
+        if (deviceList != null) {
+            openUsbDeviceDialog(deviceList);
+        }
+    }
+
+    private void openUsbDeviceDialog(ArrayList<String> deviceList) {
+        final CharSequence[] items = deviceList.toArray(new CharSequence[deviceList.size()]);
+        if (items.length == 1) {
+            String selectedDevice = (String) items[0];
+            SPUtils.getInstance().put("deviceAddress", selectedDevice);
+            SPUtils.getInstance().put("bluetoothName", "");
+            SPUtils.getInstance().put("bluetoothAddress", "");
+            SPUtils.getInstance().put("isSelectUsbSuccess", true);
+            SPUtils.getInstance().put("isSelectUartSuccess", false);
+            hideAllView();
+            viewModel.isShowUSBImageView.set(true);
+            viewModel.isShowUsbTextView.set(true);
+            viewModel.deviceConnected.set(true);
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("Select a Reader");
+            if (items.length == 0) {
+                builder.setMessage(getActivity().getString(R.string.setting_disusb));
+                builder.setPositiveButton(getActivity().getString(R.string.confirm), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+
+                    }
+                });
+            }
+            builder.setSingleChoiceItems(items, -1, (dialog, item) -> {
+                if (items.length > item) {
+                    String selectedDevice = items[item].toString();
+                    dialog.dismiss();
+                    SPUtils.getInstance().put("deviceAddress", selectedDevice);
+                    SPUtils.getInstance().put("isSelectUsbSuccess", true);
+
+                }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.setCanceledOnTouchOutside(false);
+            alertDialog.setCancelable(false);
+            alertDialog.show();
+
+            Button positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+            if (positiveButton != null) {
+                positiveButton.setTextColor(getResources().getColor(R.color.transaction_detail_text_red));
+                positiveButton.setTextSize(16);
+                positiveButton.setTypeface(null, Typeface.BOLD);
+            }
+        }
+    }
+
+}

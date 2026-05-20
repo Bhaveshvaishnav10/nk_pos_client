@@ -1,0 +1,190 @@
+[
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/activity_payment_methold.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/activity_payment_methold.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/activity_print_ticket.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/activity_print_ticket.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/dialog_custom_alert.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/dialog_custom_alert.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/content_main.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/content_main.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/print_item.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/print_item.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/item_currency.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/item_currency.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/activity_transaction_details.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/activity_transaction_details.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/include_pinpad.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/include_pinpad.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/activity_payment.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/activity_payment.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/item_header.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/item_header.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/menu_item_expandable.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/menu_item_expandable.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/item_nav_divider.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/item_nav_divider.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/include_keyboardview.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/include_keyboardview.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/item_bluetooth_device.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/item_bluetooth_device.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/view_paypass_layout.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/view_paypass_layout.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/activity_main.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/fragment_transaction.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/fragment_transaction.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/activity_device_selection.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/activity_device_selection.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/emv_app_dialog.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/emv_app_dialog.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/view_paypass_gridview_item.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/view_paypass_gridview_item.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/activity_printer_base.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/activity_printer_base.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/fragment_connection_settings.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/fragment_connection_settings.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/item_banner.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/item_banner.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/activity_title.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/activity_title.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/alert_dialog.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/alert_dialog.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/item_transaction.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/item_transaction.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/spinner_dropdown_item.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/spinner_dropdown_item.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/activity_reissue_receipt.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/activity_reissue_receipt.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/widget_seekbar.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/widget_seekbar.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/activity_paymentstatus.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/activity_paymentstatus.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/print_dialog_layout.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/print_dialog_layout.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/frangment_search_failed.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/frangment_search_failed.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/fragment_base_pager.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/fragment_base_pager.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/nav_header_main.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/nav_header_main.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/activity_currency_selection.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/activity_currency_selection.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/fragment_home.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/fragment_home.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/dialog_bluetooth_devices.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/dialog_bluetooth_devices.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/printer_work_item.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/printer_work_item.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/fragment_input_money1.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/fragment_input_money1.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/dialog_low_battery.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/dialog_low_battery.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/view_paypass_dialog.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/view_paypass_dialog.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/app_bar_main.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/app_bar_main.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/spinner_item.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/spinner_item.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/activity_scan.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/activity_scan.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/printer_setting_dialog_view.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/printer_setting_dialog_view.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/activity_transaction_filter.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/activity_transaction_filter.xml"
+    },
+    {
+        "merged": "com.neokred.pos.app-mergeDebugResources-58:/layout/activity_payment_generate.xml",
+        "source": "com.neokred.pos.app-main-61:/layout/activity_payment_generate.xml"
+    }
+]

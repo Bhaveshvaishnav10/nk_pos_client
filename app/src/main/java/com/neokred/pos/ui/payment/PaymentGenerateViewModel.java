@@ -1,0 +1,132 @@
+package com.neokred.pos.ui.payment;
+
+import android.app.Application;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.DisplayMetrics;
+import android.util.Log;
+
+import com.neokred.pos.common.base.BaseAppViewModel;
+import com.neokred.pos.utils.TRACE;
+import com.google.zxing.BarcodeFormat;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
+
+import java.util.UUID;
+
+import androidx.annotation.NonNull;
+import androidx.databinding.ObservableField;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import me.goldze.mvvmhabit.binding.command.BindingAction;
+import me.goldze.mvvmhabit.binding.command.BindingCommand;
+import me.goldze.mvvmhabit.bus.event.SingleLiveEvent;
+
+public class PaymentGenerateViewModel extends BaseAppViewModel {
+    private final MutableLiveData<String> amount = new MutableLiveData<>();
+
+    public ObservableField<Boolean> isSmallScreen = new ObservableField<>(true);
+
+    public ObservableField<Boolean> isNormalScreen = new ObservableField<>(true);
+    public SingleLiveEvent<Boolean> paymentResultEvent = new SingleLiveEvent<>();
+    private final MutableLiveData<Bitmap> qrCodeBitmap = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
+    private final MutableLiveData<String> transactionId = new MutableLiveData<>();
+
+    public PaymentGenerateViewModel(@NonNull Application application) {
+        super(application);
+        isLoading.setValue(false);
+        // Generate initial transaction ID
+        transactionId.setValue(generateTransactionId());
+    }
+
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+
+    public LiveData<String> getAmount() {
+        return amount;
+    }
+
+    public LiveData<Bitmap> getQrCodeBitmap() {
+        return qrCodeBitmap;
+    }
+
+    public BindingCommand checkPayStatus = new BindingCommand(() -> {
+        paymentResultEvent.setValue(true);
+        Log.d("PaymentGenerate", "check pay status");
+    });
+
+
+    public void setPaymentAmount(String amountValue) {
+        amount.setValue(amountValue);
+        generateQRCode(amountValue);
+    }
+
+    private void generateQRCode(String amount) {
+        new Thread(() -> {
+            try {
+                String paymentData = createPaymentData(amount, transactionId.getValue());
+
+                DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+                int screenWidth = metrics.widthPixels;
+                int screenHeight = metrics.heightPixels;
+
+                // Calculate optimal size - 60-80% of screen width, but not exceeding specific limit
+                int maxQrSize = (int) (Math.min(screenWidth, screenHeight) * 0.9f);
+                int minQrSize = (int) (Math.min(screenWidth, screenHeight) * 0.7f);
+
+                // Ensure reasonable size
+                int qrSize = Math.max(minQrSize, Math.min(maxQrSize, 600)); // Maximum 600px
+                TRACE.d("generateQRCode:"+qrSize);
+
+                BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                Bitmap bitmap = barcodeEncoder.encodeBitmap(
+                        paymentData,
+                        BarcodeFormat.QR_CODE,
+                        qrSize,
+                        qrSize
+                );
+
+                qrCodeBitmap.postValue(bitmap);
+            } catch (Exception e) {
+                e.printStackTrace();
+                qrCodeBitmap.postValue(null);
+            }
+        }).start();
+    }
+
+    private String createPaymentData(String amount, String transactionId) {
+        return "payment://transaction?" +
+                "amount=" + amount +
+                "&currency=INR" +
+                "&merchant=DSPread" +
+                "&timestamp=" + System.currentTimeMillis() +
+                "&transaction_id=" + transactionId;
+    }
+
+    private String generateTransactionId() {
+        return "TXN_" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
+
+    private String formatAmount(String amount) {
+        try {
+            double value = Double.parseDouble(amount.replace("₹", "").trim());
+            return String.format("₹%.2f", value);
+        } catch (NumberFormatException e) {
+            return "₹0.00";
+        }
+    }
+
+
+    public BindingCommand closeButton = new BindingCommand(new BindingAction() {
+        @Override
+        public void call() {
+            finish();
+        }
+    });
+
+
+
+}

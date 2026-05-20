@@ -1,0 +1,382 @@
+<resources>
+    <!-- ============================================= -->
+    <!-- NEOKRED DESIGN SYSTEM - Styles -->
+    <!-- ============================================= -->
+
+    <!-- Base application theme -->
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+        <!-- Theme customizations for backward-compatibility -->
+    </style>
+
+    <!-- Application theme -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <item name="android:buttonStyle">@style/NumberKeyboardButton</item>
+    </style>
+
+    <!-- Typography Styles -->
+    <style name="TextAppearance.Display" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">@dimen/text_display</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="TextAppearance.Headline" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">@dimen/text_headline</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="TextAppearance.Title" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">@dimen/text_title</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="TextAppearance.Subtitle" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">@dimen/text_subtitle</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="TextAppearance.Body" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="TextAppearance.Caption" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">@dimen/text_caption</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="TextAppearance.Small" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">@dimen/text_small</item>
+        <item name="android:textColor">@color/text_tertiary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="TextAppearance.Amount" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">@dimen/text_amount</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Legacy Title Style -->
+    <style name="TitleText">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/text_subtitle</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="DropLineTheme">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:src">@color/gainsboro</item>
+    </style>
+
+
+    <style name="MyDialogStyle">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+
+    <!--    <style name="divider_gray_line">-->
+    <!--        <item name="android:layout_height">0.5dp</item>-->
+    <!--        <item name="android:layout_width">match_parent</item>-->
+    <!--        <item name="android:background">@color/line_color</item>-->
+    <!--    </style>-->
+
+    <style name="DialogTheme" parent="@android:style/Theme.Dialog">
+        <!-- 边框 -->
+        <item name="android:windowFrame">@null</item>
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 半透明 -->
+        <item name="android:windowIsTranslucent">true</item>
+        <!-- 无标题 -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:background">@android:color/transparent</item>
+        <!-- 背景透明 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- 模糊 -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!-- 遮罩层 -->
+        <item name="android:backgroundDimAmount">0.5</item>
+    </style>
+
+    <style name="dialogstyle" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <!--设置dialog的背景-->
+        <item name="android:windowBackground">@android:color/white</item>
+        <!--设置Dialog的windowFrame框为无-->
+        <item name="android:windowFrame">@null</item>
+        <!--设置无标题-->
+        <item name="android:windowNoTitle">true</item>
+        <!--是否浮现在activity之上-->
+        <item name="android:windowIsFloating">true</item>
+        <!--是否半透明-->
+        <item name="android:windowIsTranslucent">true</item>
+        <!--设置窗口内容不覆盖-->
+        <item name="android:windowContentOverlay">@null</item>
+        <!--设置动画，在这里使用让它继承系统的Animation.Dialog-->
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <!--背景是否模糊显示-->
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+    <!--主题样式-->
+    <style name="dialog_pay_theme" parent="@android:style/Theme.Dialog">
+        <!--边框-->
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimAmount">0.4</item><!--弹框背景灰度-->
+    </style>
+
+
+    <style name="switchStyleDefault" parent="@style/TextAppearance.AppCompat.Widget.Switch">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/teal_200</item>
+    </style>
+
+    <style name="switchStyleCheck" parent="@style/TextAppearance.AppCompat.Widget.Switch">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/teal_200</item>
+    </style>
+
+    <style name="Dialog" parent="android:style/Theme.Dialog">
+        <item name="android:background">#00000000</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+
+    <style name="text_18_ffffff">
+        <item name="android:textSize">14.0dip</item>
+        <item name="android:textColor">#000</item>
+    </style>
+
+    <style name="text_16_666666">
+        <item name="android:textSize">14.0dip</item>
+        <item name="android:textColor">#ff666666</item>
+    </style>
+
+    <style name="sdw_white">
+        <item name="android:shadowColor">#7fffffff</item>
+        <item name="android:shadowDx">0.0</item>
+        <item name="android:shadowDy">0.65</item>
+        <item name="android:shadowRadius">1.0</item>
+    </style>
+
+    <style name="sdw_79351b">
+        <item name="android:shadowDx">0.0</item>
+        <item name="android:shadowDy">1.0</item>
+        <item name="android:shadowRadius">1.0</item>
+    </style>
+
+    <style name="text_15_ffffff_sdw" parent="@style/sdw_79351b">
+        <item name="android:textSize">15.0dip</item>
+        <item name="android:textColor">#333333</item>
+    </style>
+
+    <style name="text_15_666666_sdw" parent="@style/sdw_white">
+        <item name="android:textSize">15.0dip</item>
+        <item name="android:textColor">#1577FF</item>
+    </style>
+
+    <style name="AppTheme.Splash" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <!-- <item name="android:windowBackground">@drawable/checkcard</item>-->
+    </style>
+
+    <!-- ============================================= -->
+    <!-- Button Styles -->
+    <!-- ============================================= -->
+
+    <!-- Base Button Style -->
+    <style name="Button.Base" parent="Widget.AppCompat.Button">
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="android:minWidth">@dimen/button_min_width</item>
+        <item name="android:paddingStart">@dimen/spacing_normal</item>
+        <item name="android:paddingEnd">@dimen/spacing_normal</item>
+        <item name="android:textSize">@dimen/text_button</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:gravity">center</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <!-- Primary Button -->
+    <style name="Button.Primary" parent="Button.Base">
+        <item name="android:background">@drawable/bg_primary_button</item>
+        <item name="android:textColor">@color/text_on_primary</item>
+        <item name="android:elevation">@dimen/elevation_small</item>
+    </style>
+
+    <!-- Outline Button -->
+    <style name="Button.Outline" parent="Button.Base">
+        <item name="android:background">@drawable/btn_bg_outline</item>
+        <item name="android:textColor">@color/primary</item>
+    </style>
+
+    <!-- Number Keyboard Button Styles -->
+    <style name="NumberKeyboardButton" parent="Widget.AppCompat.Button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_margin">@dimen/spacing_xxs</item>
+        <item name="android:textSize">@dimen/text_button</item>
+        <item name="android:textStyle">bold</item>
+        <item name="layout_columnWeight">1</item>
+        <item name="layout_rowWeight">1</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:background">@drawable/bg_keyboard_button</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textColor">@color/keyboard_button_text</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:elevation">@dimen/elevation_none</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <!-- Confirm Button Style -->
+    <style name="NumberKeyboardButton.Confirm">
+        <item name="android:background">@drawable/bg_keyboard_confirm_button</item>
+        <item name="android:textColor">@color/keyboard_confirm_text</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Clear Button Style -->
+    <style name="NumberKeyboardButton.Clear">
+        <item name="android:background">@drawable/bg_keyboard_clear_button</item>
+        <item name="android:textColor">@color/keyboard_clear_text</item>
+    </style>
+
+    <style name="HalfScreenDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
+        <!-- 添加以下属性 -->
+        <item name="android:gravity">bottom</item>
+        <item name="android:layout_gravity">bottom</item>
+    </style>
+
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_down</item>
+    </style>
+    <style name="Theme.AppCompat.Light.NoActionBar">
+            <item name="windowActionBar">false</item>
+            <item name="windowNoTitle">true</item>
+        </style>
+
+    <!--键盘主题-->
+    <style name="AnimBottom" parent="@android:style/Animation">
+        <item name="android:windowEnterAnimation">@anim/push_bottom_in</item>
+        <item name="android:windowExitAnimation">@anim/push_bottom_out</item>
+    </style>
+
+    <style name="LinearLayoutStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="background">?attr/selectableItemBackground</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="TextviewPrint">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:gravity">center</item>
+        <item name="android:drawableEnd">@mipmap/lift_arrow</item>
+    </style>
+
+    <style name="BtnStylePrint">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <style name="LinPaymentLayout">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:background">@drawable/bg_rounded_red_border</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <!-- 数字按钮样式 -->
+    <style name="ModernNumberButton" parent="Widget.AppCompat.Button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_rowWeight">1</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:background">@drawable/bg_number_button</item>
+        <item name="android:textColor">#ff1b1b1b</item>
+        <item name="android:textSize">27sp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:padding">2dp</item>
+    </style>
+    <!-- 图标按钮样式 -->
+    <style name="ModernIconButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="android:background">@drawable/bg_number_button</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- 确认按钮样式 -->
+    <style name="ModernConfirmButton" parent="ModernNumberButton">
+        <item name="android:background">@drawable/bg_confirm_button_selector</item>
+    </style>
+
+    <style name="MySwitchStyle" parent="Widget.AppCompat.CompoundButton.Switch">
+        <!-- 拇指颜色 -->
+                <item name="android:thumb">@drawable/switch_thumb</item>
+<!--        <item name="android:thumbTint">@color/switch_thumb_selector</item>-->
+        <!-- 轨道颜色 -->
+<!--                <item name="android:trackTint">@drawable/switch_track</item>-->
+        <item name="android:trackTint">@color/switch_track_selector</item>
+
+    </style>
+
+    <!-- 筛选按钮样式 -->
+    <style name="FilterButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/filter_text_selector</item>
+        <item name="android:background">@drawable/date_filter_selector</item>
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">8dp</item>
+    </style>
+
+</resources>

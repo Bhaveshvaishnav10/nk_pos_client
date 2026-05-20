@@ -1,0 +1,87 @@
+package com.neokred.pos.ui.transaction.reissue;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+
+import com.neokred.pos.ui.printer.activities.PrintTicketActivity;
+import com.neokred.pos.ui.transaction.Transaction;
+import com.neokred.pos.ui.transaction.reissue.TransactionReissueReceipViewModel;
+import com.neokred.pos.utils.DeviceUtils;
+import com.neokred.pos.utils.TRACE;
+import com.neokred.pos.BR;
+import com.neokred.pos.R;
+import com.neokred.pos.databinding.ActivityReissueReceiptBinding;
+
+
+import java.math.BigDecimal;
+
+import me.goldze.mvvmhabit.base.BaseActivity;
+
+public class ReissueReceiptActivity extends BaseActivity<ActivityReissueReceiptBinding, TransactionReissueReceipViewModel> {
+    private Transaction transaction;
+
+    @Override
+    public int initContentView(Bundle bundle) {
+        return R.layout.activity_reissue_receipt;
+    }
+
+    @Override
+    public int initVariableId() {
+        return BR.viewModel;
+    }
+
+    @Override
+    public void initData() {
+        super.initData();
+        binding.setVariable(BR.viewModel, viewModel);
+        String deviceModel = DeviceUtils.getPhoneModel();
+        if("D70".equals(deviceModel)){
+            viewModel.isD70.set(true);
+        }else{
+            viewModel.isD70.set(false);
+        }
+
+        transaction = (Transaction) getIntent().getSerializableExtra("transaction");
+
+        String amount = getIntent().getStringExtra("amount");
+
+        String mAmount = DeviceUtils.convertAmountToCents(amount);
+        TRACE.d("mAmount:" + mAmount);
+        binding.amountText.setText("₹" + mAmount);
+
+        if(DeviceUtils.isPrinterDevices()){
+            binding.printButton.setVisibility(View.VISIBLE);
+        }else {
+            binding.printButton.setVisibility(View.GONE);
+        }
+        binding.toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        binding.printButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ReissueReceiptActivity.this, PrintTicketActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("terAmount", DeviceUtils.convertAmountToCents(transaction.getAmount()+""));
+                intent.putExtra("maskedPAN", transaction.getMaskPan());
+                intent.putExtra("terminalTime", transaction.getTransactionDate());
+                intent.putExtra("transactionTime",transaction.getTransactionTime());
+                ReissueReceiptActivity.this.startActivity(intent);
+
+            }
+        });
+
+    }
+
+    @Override
+    public void initViewObservable() {
+        viewModel.doneEvent.observe(this, unused -> {
+            finish();
+        });
+    }
+}

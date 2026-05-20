@@ -1,0 +1,36 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.neokred.pos.app-mergeDebugResources-57:/values-small-v4/values-small-v4.xml",
+            "map": [
+                {
+                    "source": "/Users/bhaveshkumar/.gradle/caches/transforms-3/7d345673d0b6e184cb52abdbe84f218a/transformed/material-1.11.0/res/values-small-v4/values-small-v4.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,128,198,270",
+                        "endColumns": "72,69,71,69",
+                        "endOffsets": "123,193,265,335"
+                    }
+                },
+                {
+                    "source": "/Users/bhaveshkumar/AndroidStudioProjects/android/nk_pos_client/app/src/main/res/values-small/dimens.xml",
+                    "from": {
+                        "startLines": "3,2,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "102,57,148,192",
+                        "endColumns": "44,43,42,42",
+                        "endOffsets": "142,96,186,230"
+                    },
+                    "to": {
+                        "startLines": "6,7,8,9",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "340,385,429,472",
+                        "endColumns": "44,43,42,42",
+                        "endOffsets": "380,424,467,510"
+                    }
+                }
+            ]
+        }
+    ]
+}

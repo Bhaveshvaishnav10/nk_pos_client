@@ -1,0 +1,19 @@
+apply from: "config.gradle"
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url "https://bugly.qq.com/maven/" }
+        maven { url "https://maven.cnb.cool/tencent-tds/shiply-public/-/packages/" }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath "com.tencent.bugly:tinker-support:1.2.3"
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

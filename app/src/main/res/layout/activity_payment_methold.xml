@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:binding="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.neokred.pos.ui.payment.PaymentMethodViewModel" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+
+        <!-- 小屏幕设备 布局 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="@{viewModel.isSmallScreen?View.VISIBLE:View.GONE}">
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- 左侧文本容器 -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_centerVertical="true"
+                    android:orientation="horizontal">
+
+                    <!-- 总金额标题 -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total"
+                        android:textColor="#ff191e3b"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <!-- 总金额 -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dp_8"
+                        android:autoSizeTextType="uniform"
+                        android:maxLines="1"
+                        android:text="@{viewModel.totalAmount}"
+                        android:textColor="#ff191e3b"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <!-- 关闭按钮 -->
+                <ImageButton
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:contentDescription="Close"
+                    android:src="@mipmap/ic_close_black"
+                    binding:onClickCommand="@{viewModel.closeButton}" />
+
+            </RelativeLayout>
+            <!-- 支付方式标题 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_15"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="5dp"
+                android:gravity="left"
+                android:text="Select payment method"
+                android:textColor="@color/primary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+
+        <!-- 正常设备的UI 布局-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="@{viewModel.isNormalScreen?View.VISIBLE:View.GONE}">
+
+            <!-- 顶部区域：退出按钮和总金额 -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp">
+
+                <!-- 退出按钮 -->
+                <ImageButton
+                    android:id="@+id/closeButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentEnd="true"
+                    android:background="@null"
+                    android:contentDescription="Close"
+                    android:src="@mipmap/ic_close_black"
+                    binding:onClickCommand="@{viewModel.closeButton}" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <!-- 总金额标题 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total"
+                    android:textColor="#ff030303"
+                    android:textSize="19sp" />
+
+                <!-- 总金额 -->
+                <TextView
+                    android:id="@+id/totalAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autoSizeTextType="uniform"
+                    android:maxLines="1"
+                    android:text="@{viewModel.totalAmount}"
+                    android:textColor="#ff030303"
+                    android:textSize="44sp"
+                    android:textStyle="bold" />
+
+                <!-- 支付方式标题 -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="36dp"
+                    android:gravity="center"
+                    android:text="Select payment method"
+                    android:textColor="@color/primary"
+                    android:textSize="19sp" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.neokred.pos.view.PaymentMethodsLayout
+            android:id="@+id/payment_methods_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </com.neokred.pos.view.PaymentMethodsLayout>
+    </LinearLayout>
+
+
+</layout>
