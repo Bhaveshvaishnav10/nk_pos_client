@@ -3,22 +3,14 @@ package com.neokred.pos.utils;
 import android.content.Context;
 import android.media.AudioManager;
 
-import com.dspread.xpos.Util;
-import com.dspread.xpos.utils.AESUtil;
+import com.neokred.sdk.payment.NeokredPOSService;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Hashtable;
-import java.util.Map;
-
-import me.goldze.mvvmhabit.utils.ToastUtils;
 
 
 public class NKPOSUtil {
@@ -360,78 +352,8 @@ public class NKPOSUtil {
         return result;
     }
 
-    private static String getRequiredParam(Map<String, byte[]> params, String key) {
-        String value = Util.byteArray2Hex(params.get(key));
-        if (value == null || value.trim().isEmpty()) {
-            ToastUtils.showLong("Missing required parameter: " + key);
-            return null;
-        }
-        return value.trim();
-    }
-
-    private static String buildPinDataBlock(String userPin, String randomData) {
-        int pinLength = userPin.length();
-
-        StringBuilder pinBlockBuilder = new StringBuilder()
-                .append("4")                            // ISO format4 label
-                .append(Integer.toHexString(pinLength)) // PIN length
-                .append(userPin);                       // PIN
-
-        // fill 'A' to block lenth to 16
-        for (int i = 0; i < 16 - 2 -pinLength; i++) {
-            pinBlockBuilder.append("A");
-        }
-
-        // add random data
-        pinBlockBuilder.append(randomData, 0, 16);
-
-        return pinBlockBuilder.toString();
-    }
-
-    private static String buildPanDataBlock(String pan) {
-        int panLength = pan.length();
-
-        StringBuilder panBlockBuilder = new StringBuilder();
-
-        if (panLength < 12) {
-            panBlockBuilder.append("0");
-            panBlockBuilder.append(String.format("%0" + (12 - panLength) + "d", 0));
-            panBlockBuilder.append(pan);
-        } else {
-            int rightOffset = panLength - 12;
-            panBlockBuilder.append(Integer.toHexString(rightOffset));
-            panBlockBuilder.append(pan);
-        }
-
-        // fill the pan lentght to 32 with 0(16bytes)
-        while (panBlockBuilder.length() < 32) {
-            panBlockBuilder.append("0");
-        }
-
-        return panBlockBuilder.toString();
-    }
-
     public static String buildISO4PinBlock(Hashtable<String, byte[]> pinParams, String userPin) {
-        if (pinParams == null) {
-            ToastUtils.showLong("PIN params can't be null");
-            return null;
-        }
-        if (userPin == null || !userPin.matches("\\d{4,12}")) {
-            ToastUtils.showLong("PIN length must be 4-12");
-            return null;
-        }
-
-        String randomData = getRequiredParam(pinParams, "RandomData");
-        String pan = getRequiredParam(pinParams, "PAN");
-        String AESKey = getRequiredParam(pinParams, "AESKey");
-
-        //iso-format4 pinblock
-        String pinBlock = buildPinDataBlock(userPin, randomData);
-        String panBlock = buildPanDataBlock(pan);
-
-        String encryptedPinBlock = AESUtil.encrypt(AESKey, pinBlock);
-        String xoredResult = Util.xor16(HexStringToByteArray(encryptedPinBlock), HexStringToByteArray(panBlock));
-        return AESUtil.encrypt(AESKey, xoredResult);
+        return NeokredPOSService.buildISO4PinBlockStatic(pinParams, userPin);
     }
 
 }

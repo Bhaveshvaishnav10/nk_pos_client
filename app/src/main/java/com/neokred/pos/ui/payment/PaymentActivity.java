@@ -174,17 +174,17 @@ public class PaymentActivity extends BaseActivity<ActivityPaymentBinding, Paymen
     private void initConnectionCallback() {
         connectionCallback = new NKConnectionCallback() {
             @Override
-            public void onDeviceNotFound() {
+            public void onRequestNoQposDetected() {
                 ToastUtils.showLong("Device connected fail");
             }
 
             @Override
-            public void onConnected() {
+            public void onRequestQposConnected() {
                 ToastUtils.showLong("Device connected");
             }
 
             @Override
-            public void onDisconnected() {
+            public void onRequestQposDisconnected() {
                 ToastUtils.showLong("Device disconnected");
                 finish();
             }
@@ -256,8 +256,9 @@ public class PaymentActivity extends BaseActivity<ActivityPaymentBinding, Paymen
     private class TransactionCallback implements NKTransactionCallback {
 
         @Override
-        public void onEmvAppSelectionRequired(List<String> appList) {
-            TRACE.d("onEmvAppSelectionRequired():" + appList.toString());
+        public void onRequestSelectEmvApp(List<String> appNames) {
+            List<String> appList = appNames;
+            TRACE.d("onRequestSelectEmvApp():" + appList.toString());
             Dialog dialog = new Dialog(PaymentActivity.this);
             dialog.setContentView(R.layout.emv_app_dialog);
             dialog.setTitle(R.string.please_select_app);
@@ -276,11 +277,8 @@ public class PaymentActivity extends BaseActivity<ActivityPaymentBinding, Paymen
             dialog.show();
         }
 
-        /**
-         * Handle PIN input request
-         */
         @Override
-        public void onPinRequested(com.neokred.sdk.payment.model.NKPinRequest pinRequest) {
+        public void onQposRequestPinResult(com.neokred.sdk.payment.model.NKPinRequest pinRequest) {
             List<String> dataList = pinRequest.getKeyPositionData();
             TRACE.i("========== PIN INPUT REQUEST ==========");
             TRACE.i("PIN Request Data: " + dataList);
@@ -297,33 +295,20 @@ public class PaymentActivity extends BaseActivity<ActivityPaymentBinding, Paymen
             }
             binding.pinpadEditText.setText("");
 
-            final StringBuilder pinBuilder = new StringBuilder();
-
-            MyKeyboardView.setKeyBoardListener(value -> {
-                if (pos.isConnected()) {
-                    TRACE.i("PIN Key Pressed: " + value);
-                    if (value != null && !value.isEmpty()) {
-                        if (value.equals("cancle")) {
-                            pinBuilder.setLength(0);
-                        } else if (value.equals("delete")) {
-                            if (pinBuilder.length() > 0) pinBuilder.setLength(pinBuilder.length() - 1);
-                        } else if (!value.equals("confirm")) {
-                            pinBuilder.append(value);
-                        }
-                    }
-                    pos.pinMapSync(value, 20);
-                }
-            });
             if (pos.isConnected()) {
                 keyboardUtil = new KeyboardUtil(PaymentActivity.this, binding.relSaleDetails, dataList);
-                keyboardUtil.initKeyboard(MyKeyboardView.KEYBOARDTYPE_Only_Num_Pwd, binding.pinpadEditText);
+                keyboardUtil.initKeyboard(
+                    MyKeyboardView.KEYBOARDTYPE_Only_Num_Pwd,
+                    value -> pos.pinMapSync(value, 60),
+                    binding.pinpadEditText
+                );
                 TRACE.i("Random PIN keyboard initialized");
             }
             TRACE.i("=======================================");
         }
 
         @Override
-        public void onOfflinePinRequested() {
+        public void onRequestSetPin() {
             TRACE.i("========== OFFLINE PIN REQUEST (CR100) ==========");
             TRACE.i("PIN Type: Offline PIN - Device PINPad");
 
@@ -372,27 +357,26 @@ public class PaymentActivity extends BaseActivity<ActivityPaymentBinding, Paymen
         }
 
         @Override
-        public void onDisplayMessage(NKDisplayMessage displayMsg) {
-            TRACE.i("========== onDisplayMessage CALLBACK ==========");
-            TRACE.i("Display Message: " + displayMsg.toString());
+        public void onRequestDisplay(NKDisplayMessage message) {
+            TRACE.i("========== onRequestDisplay CALLBACK ==========");
+            TRACE.i("Display Message: " + message.toString());
 
             String msg = "";
-            if (displayMsg == NKDisplayMessage.CARD_READ_OK) {
+            if (message == NKDisplayMessage.CARD_READ_OK) {
                 TRACE.i("MSR Data Ready - Card swiped successfully");
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PaymentActivity.this);
                 builder.setTitle("Audio");
                 builder.setMessage("Success,Contine ready");
                 builder.setPositiveButton("Confirm", null);
                 builder.show();
-            } else if (displayMsg == NKDisplayMessage.PLEASE_WAIT) {
+            } else if (message == NKDisplayMessage.INPUT_ONLINE_PIN || message == NKDisplayMessage.INPUT_OFFLINE_PIN) {
                 TRACE.i("PIN ENTRY REQUESTED BY SDK");
                 viewModel.stopLoading();
                 viewModel.clearErrorState();
-                viewModel.showPinpad.set(true);
                 binding.animationView.pauseAnimation();
             } else {
-                TRACE.i("Other Display Message: " + displayMsg.toString());
-                msg = getDisplayMessageString(displayMsg);
+                TRACE.i("Other Display Message: " + message.toString());
+                msg = getDisplayMessageString(message);
                 if (handler != null && runnable != null) {
                     handler.removeCallbacks(runnable);
                 }
@@ -403,7 +387,7 @@ public class PaymentActivity extends BaseActivity<ActivityPaymentBinding, Paymen
         }
 
         @Override
-        public void onCardRead(NKCardData cardData) {
+        public void onDoTradeResult(NKCardData cardData) {
             TRACE.i("╔══════════════════════════════════════════════════════════════╗");
             TRACE.i("║              CARD READING RESULT                             ║");
             TRACE.i("╚══════════════════════════════════════════════════════════════╝");
@@ -417,27 +401,46 @@ public class PaymentActivity extends BaseActivity<ActivityPaymentBinding, Paymen
                 viewModel.cardInsertedState();
                 pos.doEmvApp();
 
-            } else if (cardData.isNFC()) {
-                TRACE.i("---------- NFC CARD (TAP/CONTACTLESS) ----------");
+            } else if (cardData.isNFCOnline()) {
+                TRACE.i("---------- NFC ONLINE (TAP/CONTACTLESS) ----------");
                 Hashtable<String, String> batchData = pos.getNFCBatchData();
-                TRACE.i("NFC TLV Data: " + batchData.get("tlv"));
+                Hashtable<String, String> dataToProcess = (batchData != null && !batchData.isEmpty())
+                        ? batchData : cardData.getRawData();
+                TRACE.i("NFC TLV Data: " + (batchData != null ? batchData.get("tlv") : "none"));
 
                 PaymentResult paymentResult = new PaymentResult();
                 paymentResult.setAmount(amount);
-                HandleTxnsResultUtils.handleDoTradeResult(paymentResult, cardData.getRawData(), viewModel);
+                paymentResult.setMaskedPAN(cardData.getMaskedPan() != null ? cardData.getMaskedPan() : "");
+                maskedPAN = paymentResult.getMaskedPAN();
+                HandleTxnsResultUtils.handleDoTradeResult(paymentResult, dataToProcess, viewModel);
                 binding.animationView.pauseAnimation();
-                maskedPAN = cardData.getMaskedPan();
+
+            } else if (cardData.isNFCOffline()) {
+                TRACE.i("---------- NFC OFFLINE (approved locally) ----------");
+                maskedPAN = cardData.getMaskedPan() != null ? cardData.getMaskedPan() : "";
+                viewModel.setTransactionSuccess();
+                binding.animationView.pauseAnimation();
+                paymentStatus(amount, maskedPAN, terminalTime, "");
+
+            } else if (cardData.isNFCDeclined()) {
+                TRACE.i("---------- NFC DECLINED ----------");
+                viewModel.showPinpad.set(false);
+                if (keyboardUtil != null) keyboardUtil.hide();
+                binding.animationView.pauseAnimation();
+                paymentStatus("", "", "", "NFC Declined");
+                viewModel.setTransactionFailed("NFC Declined");
 
             } else if (cardData.isSwipe()) {
                 TRACE.i("---------- MCR CARD (SWIPE/MAGNETIC STRIPE) ----------");
                 PaymentResult paymentResult = new PaymentResult();
                 paymentResult.setAmount(amount);
+                paymentResult.setMaskedPAN(cardData.getMaskedPan() != null ? cardData.getMaskedPan() : "");
+                maskedPAN = paymentResult.getMaskedPAN();
                 HandleTxnsResultUtils.handleDoTradeResult(paymentResult, cardData.getRawData(), viewModel);
                 binding.animationView.pauseAnimation();
-                maskedPAN = cardData.getMaskedPan();
 
-            } else {
-                TRACE.i("---------- CARD DECLINED (SEE PHONE) ----------");
+            } else if (cardData.isPlsSeePhone()) {
+                TRACE.i("---------- PLEASE SEE PHONE (Wallet/3DS) ----------");
                 viewModel.showPinpad.set(false);
                 if (keyboardUtil != null) keyboardUtil.hide();
                 viewModel.titleText.set(getString(R.string.pls_see_phone));
@@ -447,9 +450,11 @@ public class PaymentActivity extends BaseActivity<ActivityPaymentBinding, Paymen
         }
 
         @Override
-        public void onTransactionComplete(NKTransactionResult result) {
+        public void onRequestTransactionResult(NKTransactionResult result) {
             TRACE.i("========== FINAL TRANSACTION RESULT ==========");
             TRACE.i("Transaction Status: " + result.getStatus());
+
+            terminalTime = result.getTerminalTime();
 
             runOnUiThread(() -> {
                 if (pinPadDialog != null && pinPadDialog.isShowing()) {
@@ -488,14 +493,8 @@ public class PaymentActivity extends BaseActivity<ActivityPaymentBinding, Paymen
             TRACE.i("==============================================");
         }
 
-        /**
-         * Handle online process request
-         * Sends transaction data to server for online authorization
-         *
-         * @param tlv TLV format transaction data
-         */
         @Override
-        public void onOnlineAuthRequested(String tlv, NKCardData cardData) {
+        public void onRequestOnlineProcess(String tlv, NKCardData cardData) {
             TRACE.i("========== ONLINE AUTHORIZATION REQUEST ==========");
             TRACE.i("Raw TLV Data: " + tlv);
 
@@ -559,7 +558,33 @@ public class PaymentActivity extends BaseActivity<ActivityPaymentBinding, Paymen
         @Override
         public void onError(String message) {
             TRACE.e("Transaction error: " + message);
+            if ("BAD_SWIPE".equals(message)) {
+                viewModel.startLoading("Bad swipe, please try again");
+                return;
+            }
+            viewModel.showPinpad.set(false);
+            if (keyboardUtil != null) keyboardUtil.hide();
+            paymentStatus("", "", "", message);
             viewModel.setTransactionFailed(message);
+        }
+
+        @Override
+        public void onReturnGetPinInputResult(int digitsEntered, boolean success, String reason, int minLen, int maxLen) {
+            if (digitsEntered == -1) {
+                isPinBack = false;
+                binding.pinpadEditText.setText("");
+                viewModel.onPinInputCompleted();
+                if (keyboardUtil != null) keyboardUtil.hide();
+            } else {
+                StringBuilder s = new StringBuilder();
+                for (int i = 0; i < digitsEntered; i++) s.append("*");
+                binding.pinpadEditText.setText(s.toString());
+            }
+        }
+
+        @Override
+        public void onReturnReversalData(String tlv) {
+            TRACE.i("Reversal TLV: " + tlv);
         }
     }
 
@@ -581,8 +606,8 @@ NeokredPOSService.getInstance(this).removeTransactionCallback(paymentServiceCall
         NeokredPOSService.getInstance(this).removeConnectionCallback(connectionCallback);
     }
 
-    private String getDisplayMessageString(NKDisplayMessage msg) {
-        switch (msg) {
+    private String getDisplayMessageString(NKDisplayMessage message) {
+        switch (message) {
             case PLEASE_WAIT:  return getString(R.string.wait);
             case REMOVE_CARD:  return getString(R.string.remove_card);
             case PROCESSING:   return getString(R.string.processing);
