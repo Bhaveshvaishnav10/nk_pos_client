@@ -463,32 +463,105 @@ public class PaymentActivity extends BaseActivity<ActivityPaymentBinding, Paymen
                 }
             });
 
-            viewModel.startLoading("processing");
+            NKTransactionResult.Status status = result.getStatus();
 
-            if (result.isApproved()) {
-                TRACE.i("✓ Transaction APPROVED");
-                binding.animationView.pauseAnimation();
-
-                String tlv = result.getTlv();
-                if (tlv != null && !tlv.isEmpty()) {
-                    TRACE.i("Final Transaction TLV: " + tlv);
-                    String content = getString(R.string.batch_data) + tlv;
-                    PaymentModel paymentModel = viewModel.setTransactionSuccess(content);
-
-                    List<TLV> list = TLVParser.parse(tlv);
-                    TLV tlvMaskedPan = TLVParser.searchTLV(list, "C4");
-                    String finalCardNo = tlvMaskedPan == null ? paymentModel.getCardNo() : tlvMaskedPan.value;
-                    paymentStatus(amount, finalCardNo, terminalTime, "");
+            switch (status) {
+                case APPROVED: {
+                    TRACE.i("✓ Transaction APPROVED");
+                    binding.animationView.pauseAnimation();
+                    viewModel.startLoading("processing");
+                    String tlv = result.getTlv();
+                    if (tlv != null && !tlv.isEmpty()) {
+                        TRACE.i("Final Transaction TLV: " + tlv);
+                        String content = getString(R.string.batch_data) + tlv;
+                        PaymentModel paymentModel = viewModel.setTransactionSuccess(content);
+                        List<TLV> list = TLVParser.parse(tlv);
+                        TLV tlvMaskedPan = TLVParser.searchTLV(list, "C4");
+                        String finalCardNo = tlvMaskedPan == null ? paymentModel.getCardNo() : tlvMaskedPan.value;
+                        paymentStatus(amount, finalCardNo, terminalTime, "");
+                    }
+                    break;
                 }
-            } else {
-                TRACE.i("✗ Transaction FAILED/DECLINED");
-                viewModel.showPinpad.set(false);
-                if (keyboardUtil != null) keyboardUtil.hide();
-                String desc = result.getDescription();
-                if (desc != null && !desc.isEmpty()) {
-                    paymentStatus("", "", "", desc);
-                    viewModel.setTransactionFailed(desc);
-                }
+                case BAD_SWIPE:
+                    TRACE.w("Bad swipe — ask cardholder to swipe again");
+                    viewModel.startLoading("Bad swipe, please try again");
+                    break;
+
+                case TRY_ANOTHER_INTERFACE:
+                    TRACE.w("NFC declined — please insert card");
+                    failTransaction("Please insert card");
+                    break;
+
+                case MULTIPLE_CARDS:
+                    TRACE.w("Multiple cards detected");
+                    failTransaction("Multiple cards detected, please present one card");
+                    break;
+
+                case CARD_REMOVED:
+                    TRACE.w("Card removed mid-transaction");
+                    failTransaction("Card removed, please try again");
+                    break;
+
+                case TIMEOUT:
+                case NO_RESPONSE:
+                case ICC_ONLINE_TIMEOUT:
+                    TRACE.w("Transaction timed out: " + status);
+                    failTransaction("Transaction timed out, please try again");
+                    break;
+
+                case NOT_ICC:
+                    TRACE.w("Not an ICC card — fallback to swipe");
+                    failTransaction("Please swipe card");
+                    break;
+
+                case CARD_BLOCKED_APDU_ERROR_6A81:
+                case APP_BLOCKED_APDU_ERROR_6A83:
+                    TRACE.w("Card/app blocked: " + status);
+                    failTransaction("Card blocked or not supported");
+                    break;
+
+                case CAPK_FAIL:
+                    TRACE.w("CAPK verification failed");
+                    failTransaction("Card verification failed, please try again");
+                    break;
+
+                case AID_MISSING:
+                case APP_SELECT_TIMEOUT:
+                    TRACE.w("EMV app selection failed: " + status);
+                    failTransaction("Application selection failed, please try again");
+                    break;
+
+                case DEVICE_ERROR:
+                    TRACE.e("Device hardware error");
+                    failTransaction("Device error, please restart and try again");
+                    break;
+
+                case APDU_ERROR:
+                case ICC_EXISTS_ERROR:
+                    TRACE.w("ICC/APDU error: " + status);
+                    failTransaction("Card read error, please try again");
+                    break;
+
+                case TERMINATED:
+                    TRACE.w("Transaction terminated by EMV kernel");
+                    failTransaction("Transaction terminated");
+                    break;
+
+                case DECLINED:
+                    TRACE.w("Transaction declined by issuer");
+                    failTransaction("Transaction declined");
+                    break;
+
+                case CANCEL:
+                    TRACE.w("Transaction cancelled");
+                    failTransaction("Transaction cancelled");
+                    break;
+
+                default:
+                    TRACE.e("Transaction failed: " + status);
+                    String desc = result.getDescription();
+                    failTransaction((desc != null && !desc.isEmpty()) ? desc : status.name());
+                    break;
             }
             TRACE.i("==============================================");
         }
@@ -557,15 +630,9 @@ public class PaymentActivity extends BaseActivity<ActivityPaymentBinding, Paymen
 
         @Override
         public void onError(String message) {
+            // onRequestTransactionResult handles all typed error outcomes.
+            // This callback fires in parallel for logging / non-fatal device events.
             TRACE.e("Transaction error: " + message);
-            if ("BAD_SWIPE".equals(message)) {
-                viewModel.startLoading("Bad swipe, please try again");
-                return;
-            }
-            viewModel.showPinpad.set(false);
-            if (keyboardUtil != null) keyboardUtil.hide();
-            paymentStatus("", "", "", message);
-            viewModel.setTransactionFailed(message);
         }
 
         @Override
@@ -604,6 +671,14 @@ public class PaymentActivity extends BaseActivity<ActivityPaymentBinding, Paymen
         LogFileConfig.getInstance(this).readLog();
 NeokredPOSService.getInstance(this).removeTransactionCallback(paymentServiceCallback);
         NeokredPOSService.getInstance(this).removeConnectionCallback(connectionCallback);
+    }
+
+    private void failTransaction(String message) {
+        viewModel.showPinpad.set(false);
+        if (keyboardUtil != null) keyboardUtil.hide();
+        binding.animationView.pauseAnimation();
+        paymentStatus("", "", "", message);
+        viewModel.setTransactionFailed(message);
     }
 
     private String getDisplayMessageString(NKDisplayMessage message) {
