@@ -683,7 +683,7 @@ NeokredPOSService.getInstance(this).removeTransactionCallback(paymentServiceCall
             case PLEASE_WAIT:  return getString(R.string.wait);
             case REMOVE_CARD:  return getString(R.string.remove_card);
             case PROCESSING:   return getString(R.string.processing);
-            case DECLINED:     return "transaction terminated";
+            case TRANSACTION_TERMINATED: return "transaction terminated";
             default:           return "";
         }
     }
