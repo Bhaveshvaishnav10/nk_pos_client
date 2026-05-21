@@ -297,11 +297,8 @@ public class PaymentActivity extends BaseActivity<ActivityPaymentBinding, Paymen
 
             if (pos.isConnected()) {
                 keyboardUtil = new KeyboardUtil(PaymentActivity.this, binding.relSaleDetails, dataList);
-                keyboardUtil.initKeyboard(
-                    MyKeyboardView.KEYBOARDTYPE_Only_Num_Pwd,
-                    value -> pos.pinMapSync(value, 60),
-                    binding.pinpadEditText
-                );
+                MyKeyboardView.setKeyBoardListener(value -> pos.pinMapSync(value, 60));
+                keyboardUtil.initKeyboard(MyKeyboardView.KEYBOARDTYPE_Only_Num_Pwd, binding.pinpadEditText);
                 TRACE.i("Random PIN keyboard initialized");
             }
             TRACE.i("=======================================");
